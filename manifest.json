@@ -1,10 +1,10 @@
 {
-  "id": "/our-date/",
+  "id": "./",
   "name": "Will you go on a date with me?",
   "short_name": "Date Invite",
   "description": "A special date invitation",
-  "start_url": "/our-date/index.html",
-  "scope": "/our-date/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff0f4",
