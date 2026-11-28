@@ -1,7 +1,7 @@
 {
-  "id": "./",
+  "id": "/?app=ck",
   "name": "Will you go on a date with me?",
-  "short_name": "Date Invite",
+  "short_name": "Our Date",
   "description": "A special date invitation",
   "start_url": "./",
   "scope": "./",
@@ -10,8 +10,8 @@
   "background_color": "#fff0f4",
   "theme_color": "#ffe4ec",
   "icons": [
-    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {"src": "couple-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "couple-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "couple-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ]
 }

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffe4ec">
+<title>Will you go on a date with me?</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="couple-192.png">
+<link rel="apple-touch-icon" href="couple-192.png">
+<style>
+:root{--ink:#1a1a2e;--pink:#f0568a;--pink2:#ff8fb1;--bg1:#fff0f4;--bg2:#ffe0ea;--muted:#6b6b80}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink)}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2));min-height:100vh;overflow-x:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;position:relative;z-index:2}
+.screen.active{display:flex;animation:in .45s ease}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(34px,9vw,60px);line-height:1.08;margin:14px 0 12px;letter-spacing:-.02em}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink),var(--pink2));-webkit-background-clip:text;background-clip:text;color:transparent}
+p.sub{color:var(--muted);max-width:340px;line-height:1.5;margin:0 0 26px}
+.pill{background:#fff;border-radius:99px;padding:7px 14px;font-size:12px;color:var(--pink);font-weight:600;box-shadow:0 2px 10px rgba(240,86,138,.12)}
+.row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:64px}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:15px 26px;font-weight:600;font-size:16px;transition:transform .15s,box-shadow .15s}
+#yes{background:var(--ink);color:#fff;box-shadow:0 8px 20px rgba(26,26,46,.25);transform-origin:center}
+#yes:active{transform:scale(.97)}
+#no{background:#fff;color:var(--muted);border:1px solid #f1d5de}
+#no.run{position:fixed;z-index:50;transition:left .18s ease,top .18s ease}
+.hint{margin-top:22px;font-size:13px;color:var(--pink);min-height:18px}
+/* planner */
+.card{background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border-radius:22px;padding:22px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(240,86,138,.15);text-align:left}
+.card h2{margin:0 0 4px;font-size:26px}
+.card .sub{margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px;color:var(--ink)}
+input[type=date],input[type=time],input[type=text],textarea{width:100%;padding:13px;border-radius:12px;border:1.5px solid #f1d5de;font:inherit;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--pink2);border-color:transparent}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:#fff;border:1.5px solid #f1d5de;color:var(--ink);padding:13px 10px;font-size:15px;border-radius:12px;font-weight:500}
+.opt.sel{background:var(--pink);border-color:var(--pink);color:#fff;transform:scale(1.03)}
+#confirm{width:100%;margin-top:22px;background:var(--ink);color:#fff}
+#confirm:disabled{opacity:.45}
+.err{color:#c0233f;font-size:13px;margin-top:10px;min-height:16px}
+.big{font-size:72px;margin:0}
+.summary{background:#fff;border-radius:16px;padding:14px 18px;margin:8px 0 18px;line-height:1.7;font-size:15px}
+.heart{position:fixed;pointer-events:none;z-index:1;opacity:.5;animation:float linear forwards}
+@keyframes float{from{transform:translateY(0) scale(.8);opacity:.7}to{transform:translateY(-110vh) scale(1.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){.screen.active{animation:none}.heart{display:none}}
+</style>
+</head>
+<body>
+
+<!-- Screen 1 -->
+<section class="screen active" id="s1">
+  <span class="pill">💌 A special question for you</span>
+  <h1>Will you go on a <em>date</em> with me?</h1>
+  <p class="sub">I've planned something sweet, but it's missing the most important ingredient: <b>you</b>.</p>
+  <div class="row" id="btnrow">
+    <button id="yes">Yes, I'd love to 💗</button>
+    <button id="no">No, thanks</button>
+  </div>
+  <div class="hint" id="hint"></div>
+</section>
+
+<!-- Screen 2 -->
+<section class="screen" id="s2">
+  <div class="card">
+    <h2>Yay, let's plan it 🎉</h2>
+    <p class="sub">Pick when and what we'd love to do. You can change anything before confirming.</p>
+    <label for="who">Your name</label>
+    <input type="text" id="who" placeholder="Your name" maxlength="40">
+    <label for="d">Pick a date</label>
+    <input type="date" id="d">
+    <label for="t">Pick a time</label>
+    <input type="time" id="t">
+    <label>What should we do?</label>
+    <div class="opts" id="opts">
+      <button class="opt" data-v="Dinner">🍽️ Dinner</button>
+      <button class="opt" data-v="Coffee">☕ Coffee</button>
+      <button class="opt" data-v="Walk">🚶 Walk</button>
+      <button class="opt" data-v="Movie night">🎬 Movie night</button>
+      <button class="opt" data-v="Picnic">🧺 Picnic</button>
+      <button class="opt" data-v="Surprise date">🎁 Surprise me</button>
+    </div>
+    <label for="note">Anything else? (optional)</label>
+    <textarea id="note" rows="2" placeholder="A message for me 💕" maxlength="200"></textarea>
+    <button id="confirm" disabled>Confirm our date 💌</button>
+    <div class="err" id="err"></div>
+  </div>
+</section>
+
+<!-- Screen 3 -->
+<section class="screen" id="s3">
+  <p class="big">💞</p>
+  <h1>Yay! It's a <em>date!</em></h1>
+  <div class="summary" id="sum"></div>
+  <p class="sub" id="sent">Can't wait to spend time with you. 💗</p>
+  <button id="edit" class="opt" style="max-width:240px">Edit my choices</button>
+</section>
+
+<script>
+const OWNER_EMAIL = "clintrusselallera@gmail.com";
+const $ = id => document.getElementById(id);
+const show = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); window.scrollTo(0,0); };
+
+/* ---- floating hearts ---- */
+function hearts(n=14){
+  for(let i=0;i<n;i++){
+    const h=document.createElement('div');
+    h.className='heart';
+    h.textContent=['💗','💕','💖','💘'][i%4];
+    h.style.left=Math.random()*100+'vw';
+    h.style.bottom='-30px';
+    h.style.fontSize=(16+Math.random()*22)+'px';
+    h.style.animationDuration=(4+Math.random()*4)+'s';
+    h.style.animationDelay=(Math.random()*1.5)+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),9000);
+  }
+}
+setInterval(()=>hearts(2),2500);
+
+/* ---- NO button: unlimited dodging, can never be pressed ---- */
+const no=$('no'), yes=$('yes');
+const lines=["Nice try 😏","Are you sure? 🥺","Pretty please? 💗","Can't catch me!","Just say yes 😘","Hehe, nope!","Think again 💕","The No button is broken 🙈","Click YES, baby 😌"];
+let tries=0, scale=1;
+function dodge(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  tries++;
+  no.classList.add('run');
+  const w=no.offsetWidth,h=no.offsetHeight;
+  const maxX=window.innerWidth-w-12, maxY=window.innerHeight-h-12;
+  no.style.left=Math.max(8,Math.random()*maxX)+'px';
+  no.style.top=Math.max(8,Math.random()*maxY)+'px';
+  scale=Math.min(scale+0.08,1.9);
+  yes.style.transform='scale('+scale+')';
+  yes.style.margin=(scale*6)+'px';
+  $('hint').textContent=lines[tries%lines.length];
+}
+['pointerenter','pointerdown','touchstart','mouseover','click','focus'].forEach(ev=>no.addEventListener(ev,dodge,{passive:false}));
+no.addEventListener('keydown',dodge);
+
+/* ---- YES ---- */
+yes.addEventListener('click',()=>{ hearts(30); show('s2'); });
+
+/* ---- Planner ---- */
+let activity='';
+const today=new Date(); today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
+$('d').min=today.toISOString().slice(0,10);
+document.querySelectorAll('.opt[data-v]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.opt[data-v]').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel'); activity=b.dataset.v; check();
+}));
+['d','t'].forEach(i=>$(i).addEventListener('input',check));
+function check(){ $('confirm').disabled=!($('d').value && $('t').value && activity); }
+
+function pretty(){
+  const dt=new Date($('d').value+'T'+$('t').value);
+  return {
+    date:dt.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+    time:dt.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})
+  };
+}
+
+$('confirm').addEventListener('click',async()=>{
+  const p=pretty(), name=$('who').value.trim()||'Someone special', note=$('note').value.trim();
+  $('confirm').disabled=true; $('confirm').textContent='Sending… 💌'; $('err').textContent='';
+  const payload={
+    _subject:'💗 She said YES! Date plan from '+name,
+    _template:'table', _captcha:'false',
+    name:name, date:p.date, time:p.time, activity:activity, message:note||'(none)'
+  };
+  let ok=false;
+  try{
+    const r=await fetch('https://formsubmit.co/ajax/'+OWNER_EMAIL,{
+      method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload)});
+    const j=await r.json(); ok = r.ok && (j.success===true||j.success==='true');
+  }catch(e){ ok=false; }
+
+  $('sum').innerHTML='👤 '+esc(name)+'<br>📅 '+p.date+'<br>🕒 '+p.time+'<br>✨ '+esc(activity)+(note?'<br>💬 '+esc(note):'');
+  if(ok){ $('sent').textContent="Your plan was sent. Can't wait to spend time with you. 💗"; }
+  else{
+    const body=encodeURIComponent('She said YES!\nName: '+name+'\nDate: '+p.date+'\nTime: '+p.time+'\nActivity: '+activity+'\nMessage: '+(note||'-'));
+    $('sent').innerHTML='Almost done! <a href="mailto:'+OWNER_EMAIL+'?subject='+encodeURIComponent('Our date plan 💗')+'&body='+body+'" style="color:#f0568a;font-weight:600">Tap here to send me the plan</a>';
+  }
+  $('confirm').textContent='Confirm our date 💌'; check();
+  hearts(40); show('s3');
+});
+$('edit').addEventListener('click',()=>show('s2'));
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
